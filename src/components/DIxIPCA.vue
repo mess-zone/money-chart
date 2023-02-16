@@ -1,22 +1,12 @@
 <template>
   <h1>CDI x IPCA</h1>
   <Line :data="data" :options="options" />
-
-  <div style="display: flex">
-    <pre>
-      <h2>CDI</h2>
-      {{cdi}}
-    </pre>
-    <pre>
-      <h2>IPCA</h2>
-      {{ipca}}
-    </pre>
-  </div>
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import axios from 'axios'
+import zoomPlugin from 'chartjs-plugin-zoom';
 
 import {
   Chart as ChartJS,
@@ -37,28 +27,47 @@ ChartJS.register(
   LineElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
 )
 
-const data = ref({
-    labels: ['01/23', '02/23', '03/23', '04/23', '05/23', '06/23', '07/23'],
+ChartJS.register(zoomPlugin);
+
+const data = computed( () => ({
+    // labels: dates.value,
     datasets: [
-      {
-        label: 'CDI',
-        backgroundColor: 'blue',
-        data: [40, 39, 10, 40, 39, 80, 40]
-      },
       {
         label: 'IPCA',
         backgroundColor: 'red',
-        data: [20, 10, 40, 20, 45, 56, 78]
-      }
+        data: ipca.value.map(item => ({ x: new Date(item.VALDATA), y: item.VALVALOR})).filter(item => item.x.getFullYear() >= 2018 ).map(item => ({ x: item.x.toISOString().slice(0,10), y: item.y})),
+        // data: ipca.value.map(item => ({ x: new Date(item.VALDATA).toISOString().slice(0,10), y: item.VALVALOR})),
+      },
+      {
+        label: 'CDI',
+        backgroundColor: 'blue',
+        data: cdi.value.map(item => ({ x: new Date(item.VALDATA), y: item.VALVALOR})).filter(item => item.x.getFullYear() >= 2018 ).map(item => ({ x: item.x.toISOString().slice(0,10), y: item.y})),
+        // data: cdi.value.map(item => ({ x: new Date(item.VALDATA).toISOString().slice(0,10), y: item.VALVALOR})),
+      },
+
     ]
-})
+}))
   
 const options = ref({
     // responsive: true,
     // maintainAspectRatio: false
+    plugins: {
+      zoom: {
+        zoom: {
+          // wheel: {
+          //   enabled: true,
+          // },
+        //   pinch: {
+        //     enabled: true
+        //   },
+        //   mode: 'x',
+        }
+      }
+    }
+  
 })
   
 
