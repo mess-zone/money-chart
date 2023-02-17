@@ -1,6 +1,7 @@
 # Money Chart
 
-Gráfico de comparação da variação mensal da Selic, CDI e IPCA
+Gráfico de comparação da variação mensal da Selic, CDI e IPCA.
+Informações retiradas das APIs do governo (https://github.com/Tpessia/dados-financeiros)
 
 Preview: https://mess-zone.github.io/money-chart/
 
